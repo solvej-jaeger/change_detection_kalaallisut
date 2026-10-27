@@ -6,7 +6,12 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-source("R/01_load_packages.R")
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggpubr)
+library(lme4)
+library(lmerTest)
 ```
 
 ## Read and clean data
