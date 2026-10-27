@@ -4,9 +4,9 @@ This repository contains experimental materials, data and analysis scripts from 
 
 ## Repository Contents
 
+- Scripts for data preprocessing and analyses
 - `data/` — The Kalaallisut change-detection data (licensed separately, see below).
 - `research materials/` — The experiment script and experimental items.
-- scripts for data preprocessing and analyses
 
 ## License
 
