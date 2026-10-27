@@ -5,24 +5,98 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+source("R/01_load_packages.R")
 ```
 
-## R Markdown
+## Read data
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
+# combining all the csv files in one data frame
+#------------------------------------------
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+# make a list of file names
+file_names <- dir("data/data_raw/")
 
-```{r cars}
-summary(cars)
+# add "data/data_raw/" to the beginning of all file names
+text_to_add <- "data/data_raw/"
+file_names <- lapply(file_names, function(x) paste(text_to_add,x, sep = ""))
+
+# combine all the csvs in one data frame
+data_frame <- do.call(bind_rows,lapply(file_names,read.csv))
+
 ```
 
-## Including Plots
+## Clean up data frame
 
-You can also embed plots, for example:
+```{r}
+# removing unwanted columns and rows in the data frame
+# -----------------------------------------------------
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# removing columns
+data_frame <- data_frame %>% select(-trial_type, -participant_finish_code, -internal_node_id, -question_order)
+
+# removing rows (fixation and masking)
+values_to_remove <- c("<p style='font-size:48px'>+</p>", "<p style='font-size:48px'>############<br>############<br>############</p>"
+)
+data_frame <- data_frame %>%
+  filter(!stimulus %in% values_to_remove)
+
+# filling demographic information to every row for each participant
+# ------------------------------------------------------------------
+
+# converting empty strings to NA in demographic columns
+columns_to_convert <- c("language", "education")
+
+data_frame_with_na <- data_frame %>%
+  mutate(across(all_of(columns_to_convert), ~na_if(.x, "")))
+
+
+# filling each participant's demographic information into all rows with the same participant ID
+columns_to_fill <- c("age", "language", "education")
+
+data_frame_filled <- data_frame_with_na %>%
+  group_by(participant) %>%
+  mutate(across(all_of(columns_to_fill), ~ifelse(is.na(.), first(.[!is.na(.)]), .)))
+
+# moving rows up or down to align for each trial
+# -----------------------------------------------
+
+# shifting the information in the Ychange-Nchange-column one row down
+original_values <- data_frame_filled$Ychange_Nchange_response
+
+data_frame_filled$Ychange_Nchange_response <- c(NA, head(original_values, -1))
+
+# filling sentence id information to every row for every trial
+# -------------------------------------------------------------
+
+# converting empty strings to NA in id columns
+columns_to_convert2 <- c("sentence_id", "sentence_id_specific")
+
+data_frame_with_na2 <- data_frame_filled %>%
+  mutate(across(all_of(columns_to_convert2), ~na_if(.x, "")))
+
+# fill
+data_frame_filled2 <- data_frame_with_na2 %>%
+  fill(all_of(columns_to_convert2), .direction = "up")
+
+# making rt columns
+# ------------------
+data_frame_filled2 <- data_frame_filled2 %>%
+  group_by(sentence_id_specific) %>%
+  mutate(rt_sentence_1 = first(rt),
+         rt_sentence_2 = nth(rt,2)) %>%
+  ungroup()
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Save preprocessed data
+
+```{r}
+# specifying file path
+file_path <- "data/data_preprocessed/data.csv"
+
+# saving the data frame as a csv
+write.csv(data_frame_filled2, file = file_path, row.names = FALSE)
+```
+
