@@ -9,4 +9,149 @@ knitr::opts_chunk$set(echo = TRUE)
 source("R/01_load_packages.R")
 ```
 
-## 
+## Read and clean data
+
+```{r read_and_clean}
+
+# reading data frame
+data_frame <- read.csv("data/data_preprocessed/data.csv")
+
+# removing rows we are not interested in
+df_clean <- subset(data_frame, original_sentence != "")
+# removing practice trials
+df_clean <- subset(df_clean, !is.na(correct_change_answer))
+
+```
+
+## Demographic overview
+
+```{r demographics}
+
+demographics <- df_clean %>%
+  group_by(participant) %>%
+  summarise(language = first(language),
+            age = first(age),
+            education = first(education))
+
+demographics
+
+# excluding one participant who answered Danish as first language
+# -------------------------------------------------------------
+participant_to_exclude1 <- c("l4kkhlaf")
+df_clean <- subset(df_clean, !participant %in% participant_to_exclude1)
+
+```
+
+## Excluding participants who have answered randomly
+
+```{r excluding participants}
+
+# making a "correct/incorrect"-column
+df_clean$correct_incorrect <- ifelse(
+  df_clean$Ychange_Nchange_response == "no" & df_clean$correct_change_answer == "no_change" |
+    df_clean$Ychange_Nchange_response == "yes" & df_clean$correct_change_answer == "affix_deletion" & df_clean$response == df_clean$correct_response |
+    df_clean$Ychange_Nchange_response == "yes" & df_clean$correct_change_answer == "other_change" & df_clean$response == df_clean$correct_response |
+    df_clean$Ychange_Nchange_response == "yes" & df_clean$correct_change_answer == "subject_deletion"& df_clean$response == df_clean$correct_response,
+  1, 0)
+
+# how many correct does each participant have?
+df_correct_count <- df_clean %>% 
+  group_by(participant) %>% 
+  summarize(correct_count = sum(correct_incorrect))
+
+# looking at the binomial distribution, we can see that the cutoff point must be 43 incorrect answers (p = 0.05).
+# if participants have more than 43 incorrect answers (less than 53 correct), it is too probable that they have answered randomly
+dbinom(x=43,size=96,prob=0.5)
+dbinom(x=44,size=96,prob=0.5)
+# note that this assumes equal 50% guessing probability per trial
+
+# excluding participants that have less than 53 correct
+participants_to_exclude2 <- c("fkfkavzw", "4fpy89hk", "pe6om3uq")
+df_clean <- subset(df_clean, !participant %in% participants_to_exclude2)
+
+```
+
+## Excluding participants who spent too long on the experiment
+
+```{r excluding participants 2}
+
+# checking how long the participants spent on the experiment in total
+df_time <- data_frame %>%
+  group_by(participant) %>%
+  summarise(total_time = max(time_elapsed, na.rm = TRUE)/60000)
+
+# and how long they spent on just the change detection part
+df_time_change_detection <- df_clean %>%
+  group_by(participant) %>%
+  summarise(total_time = max(time_elapsed, na.rm = TRUE)/60000)
+
+# excluding outliers whose total time spent on the change detection part was more than 3 SDs from the mean
+mean_time <- mean(df_time_change_detection$total_time)
+sd_time <- sd(df_time_change_detection$total_time)
+cutoff <- mean_time + 3*sd_time
+
+participants_above_cutoff <- ("knkl4dbx")
+df_clean <- subset(df_clean, !participant %in% participants_above_cutoff)
+
+```
+
+## Overview of mean reaction times
+Here is an overview of the mean reaction times for the three stages of the trials (initial sentence reading, change detection, localization).
+
+```{r reaction times overview}
+# EXCLUDE ALL THE PARTICIPANTS TO EXCLUDE BEFORE DOING THIS
+
+reading_time_first_sentence <- data_frame %>%
+  group_by(participant, sentence_id_specific) %>%
+  summarise(reading_time_sentence1 = first(rt))
+mean_reading_time_first_sentence <- reading_time_first_sentence %>%
+  filter(!(sentence_id_specific %in% c("p1", "p2", "p3", "p4", NA))) %>%
+  group_by(participant) %>%
+  summarise(mean_rt_sentence1 = mean(reading_time_sentence1))
+
+change_detection_time <- data_frame %>%
+  group_by(participant, sentence_id_specific) %>%
+  summarise(change_detection_time = rt[[2]])
+mean_change_detection_time <- change_detection_time %>%
+  filter(!(sentence_id_specific %in% c("p1", "p2", "p3", "p4", NA))) %>%
+  group_by(participant) %>%
+  summarise(mean_change_detection_rt = mean(change_detection_time))
+
+localization_time <- data_frame %>%
+  group_by(participant, sentence_id_specific) %>%
+  summarise(localization_time = rt[[3]])
+mean_localization_time <- localization_time %>%
+  filter(!(sentence_id_specific %in% c("p1", "p2", "p3", "p4", NA))) %>%
+  group_by(participant) %>%
+  summarise(mean_localization_rt = mean(localization_time))
+
+rt_different_stages <- merge(merge(mean_reading_time_first_sentence, mean_change_detection_time), mean_localization_time)
+
+rt_long <- rt_different_stages %>%
+  pivot_longer(
+    cols = c(
+      mean_rt_sentence1,
+      mean_change_detection_rt,
+      mean_localization_rt
+    ),
+    names_to = "stage",
+    values_to = "rt"
+  )
+
+rt_plot <- ggplot(rt_long, aes(x = "", y = rt)) +
+  geom_boxplot() +
+  facet_wrap(~ stage, scales = "free_y") +
+  ylim(c(0,11000)) +
+  labs(
+    x = NULL,
+    y = "Reaction time (ms)",
+    title = "Reaction times across stages"
+  ) +
+  theme_bw()
+
+rt_plot
+
+ggsave("figures/rt_different_stages.png", plot = rt_plot, width = 9, height = 4)
+
+```
+
