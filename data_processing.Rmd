@@ -86,11 +86,13 @@ data_frame <- subset(data_frame, !participant %in% participants_to_exclude2)
 df_time_change_detection <- df_clean %>%
   group_by(participant) %>%
   summarise(total_time = max(time_elapsed, na.rm = TRUE)/60000)
+df_time_change_detection
 
 # excluding outliers whose total time spent on the change detection part was more than 3 SDs from the mean
 mean_time <- mean(df_time_change_detection$total_time)
 sd_time <- sd(df_time_change_detection$total_time)
 cutoff <- mean_time + 3*sd_time
+cutoff
 
 participants_above_cutoff <- ("knkl4dbx")
 df_clean <- subset(df_clean, !participant %in% participants_above_cutoff)
@@ -101,7 +103,7 @@ data_frame <- subset(data_frame, !participant %in% participants_above_cutoff)
 ## Overview of mean reaction times
 Here is an overview of the mean reaction times for the three stages of the trials (initial sentence reading, change detection, localization).
 
-```{r reaction times overview, warning=FALSE}
+```{r reaction times overview, warning=FALSE, message=FALSE}
 
 reading_time_first_sentence <- data_frame %>%
   group_by(participant, sentence_id_specific) %>%
@@ -142,7 +144,7 @@ rt_long <- rt_different_stages %>%
 
 rt_plot <- ggplot(rt_long, aes(x = "", y = rt)) +
   geom_boxplot() +
-  facet_wrap(~ stage) +
+  facet_wrap(~ factor(stage, c("mean_rt_sentence1", "mean_change_detection_rt", "mean_localization_rt"))) +
   ylim(c(0,11000)) +
   labs(
     x = NULL,
