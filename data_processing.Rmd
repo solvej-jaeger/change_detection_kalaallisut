@@ -50,7 +50,7 @@ data_frame <- subset(data_frame, !participant %in% participant_to_exclude1)
 
 ## Excluding participants whose accuracy is too close to chance level
 
-Here, we check the participants' accuracy on all non-target trials. If this accuracy is at chance level, the participants are excluded from further data analysis, as it is too probable that they have answered randomly.
+Here, we check the participants' accuracy on all non-target trials. If this accuracy is at chance level, the participants are excluded from further data analysis, as it is too probable that they have just answered randomly throughout the experiment.
 
 ```{r excluding participants}
 
@@ -165,3 +165,133 @@ ggsave("figures/rt_different_stages.png", plot = rt_plot, width = 9, height = 4)
 
 ```
 
+# Comparing accuracy in the lexical and grammatical conditions
+
+First, let's check the localization accuracy: Among the affix deletions that were correctly detected, how many were correctly localized?
+
+```{r localization accuracy}
+
+df_clean_affix <- subset(df_clean, correct_change_answer == "affix_deletion")
+
+# LOCALIZATION
+df_clean_correct <- df_clean_affix %>%
+  filter(correct_incorrect == 1)
+
+df_clean_correct$localization_correct <- ifelse(
+  df_clean_correct$response == df_clean_correct$correct_response, 
+  1, 0
+)
+
+mean(df_clean_correct$localization_correct)
+
+```
+
+All of them were correctly localized. Therefore, we from now on can focus only on change detection accuracy and not worry about the localization step.
+
+## Two plots 
+
+```{r two plots, warning = FALSE}
+
+# bar plot
+# --------
+
+# group the data by participant and calculate the mean number of correct responses per participant
+# in the two conditions
+df_participant_mean <- df_clean_affix %>% 
+  group_by(participant, affix_type) %>% 
+  summarise(mean_accuracy = mean(correct_incorrect),
+            .groups = "drop")
+
+
+# make a bar plot with errorbars and jitter points
+accuracy_barplot <- ggbarplot(df_participant_mean,
+                              x = "affix_type",
+                              y = "mean_accuracy",
+                              add = c("mean_se", "jitter"),
+                              xlab = FALSE,
+                              ylab = "Mean accuracy",
+                              title = "Change detection of grammatical and lexical affixes") +
+  ylim(0, 1) +
+  theme_bw()
+
+accuracy_barplot
+
+ggsave("figures/accuracy_barplot.png", plot = accuracy_barplot, width = 6, height = 4)
+
+# line plot where each line is a participant
+# -------------------------------------------
+
+line_plot_accuracy <- df_participant_mean %>% 
+  ggplot(aes(affix_type, mean_accuracy)) +
+  geom_line(data = df_participant_mean, aes(affix_type, mean_accuracy, group = participant, color = participant), alpha = 0.4) +
+  # geom_errorbar(aes(ymin = correct_ratio - 0.01, ymax = correct_ratio + 0.01), width = 0.1) +
+  stat_summary(fun = mean, geom = 'point', aes(group = 1)) +
+  stat_summary(fun = mean, geom = 'line', aes(group = 1), linewidth = 0.5) +
+  theme_bw() +
+  theme(legend.position = 'none', axis.text = element_text(size = 12), axis.title = element_text(size = 15)) +
+  labs(x = '', y = 'accuracy') +
+  ylim(0, 1)
+
+line_plot_accuracy
+
+ggsave("figures/line_plot_accuracy.png", plot = line_plot_accuracy, width = 6, height = 4)
+
+
+```
+
+## Model to assess the effect of lexical/grammatical condition on accuracy
+
+```{r model1}
+
+model1_affix_type <- glmer(correct_incorrect ~ affix_type + (1|participant),
+                          family = 'binomial',
+                          df_clean_affix)
+
+summary(model1_affix_type)
+
+```
+
+A second model which includes affix frequency and length as predictors:
+
+```{r model2}
+
+
+
+```
+
+
+## Looking at accuracy rates for the specific target suffixes
+
+```{r accuracy rates for specific suffixes}
+
+# bar plot for specific suffixes
+# ---------------------------------
+
+# grouping by participant, target affix and affix type and calculating accuracy
+df_affixes <- df_clean_affix %>% 
+  group_by(participant, target_affix, affix_type) %>% 
+  summarise(
+    accuracy = mean(correct_incorrect)
+  )
+
+# plotting
+plot_suffixes <- ggbarplot(df_affixes, x = "target_affix", y = "accuracy",
+                          add = c("mean_se"),
+                          fill = "affix_type",
+                          x.text.angle = 90,  # Rotate x-axis labels vertically
+                          xlab = FALSE,
+                          legend = "right",
+                          title = "accuracy for individual affixes",
+                          sort.val = "asc"
+)
+
+plot_suffixes
+
+ggsave("figures/bar_plot_suffixes.png", plot = plot_suffixes, width = 6, height = 4)
+
+
+```
+
+# Post-hoc analyses
+
+## Accuracy by reading speed
