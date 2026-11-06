@@ -106,6 +106,7 @@ data_frame <- subset(data_frame, !participant %in% participants_above_cutoff)
 
 ```
 
+
 ## Overview of mean reaction times
 Here is an overview of the mean reaction times for the three stages of the trials (initial sentence reading, change detection, localization).
 
@@ -164,6 +165,34 @@ rt_plot
 ggsave("figures/rt_different_stages.png", plot = rt_plot, width = 9, height = 4)
 
 ```
+
+## Discarding individual outlier trials with very long reaction times
+
+We discard trials where the sum of the reaction times on the three stages (initial sentence reading, change detection, change localization) is more than three SDs above the participant's own mean. We do this because very long RTs can indicate that the participant zoned out or did not pay attention to the task.
+
+```{r discarding individual trials with long reaction times}
+
+# get reaction times for all trials
+rt_different_stages_full <- merge(merge(reading_time_first_sentence, change_detection_time), localization_time) %>%
+  filter(!(sentence_id_specific %in% c("p1", "p2", "p3", "p4", NA))) %>%
+  mutate(sum_rt = reading_time_sentence1 + change_detection_time + localization_time)
+
+# calculate participant means and SDs - and merge 
+rt_mean_and_SD <- rt_different_stages_full %>%
+  group_by(participant) %>%
+  summarise(mean_rt = mean(sum_rt),
+            sd_rt = sd(sum_rt))
+rt_different_stages_full_merged <- merge(rt_different_stages_full, rt_mean_and_SD, by = "participant")
+
+# get outlier trials
+rt_outliers <- rt_different_stages_full_merged %>%
+  filter(sum_rt > mean_rt + 3 * sd_rt)
+
+# exclude outliers
+
+
+```
+
 
 # Comparing accuracy in the lexical and grammatical conditions
 
@@ -255,6 +284,25 @@ A second model which includes affix frequency and length as predictors:
 
 ```{r model2}
 
+# read csv containing affix frequencies ad calculate log10 frequency
+frequencies <- read.csv("research materials/suffix_frequencies.csv", sep = ";")
+frequencies <- frequencies %>%
+  mutate(log10freq = log10(frequency))
+
+# merge frequency info with affix data frame
+df_clean_affix_merged <- merge(df_clean_affix, frequencies, by.x = "target_affix", by.y = "suffix")
+
+# add length column
+df_clean_affix_merged <- df_clean_affix_merged %>%
+  mutate(affix_length = nchar(target_affix))
+
+# model which includes frequency and lengt as predictors
+model2_affix_type <- glmer(correct_incorrect ~ affix_type + 
+                             log10freq + affix_length + (1|participant),
+                          family = 'binomial',
+                          df_clean_affix_merged)
+
+summary(model2_affix_type)
 
 
 ```
@@ -295,3 +343,60 @@ ggsave("figures/bar_plot_suffixes.png", plot = plot_suffixes, width = 6, height 
 # Post-hoc analyses
 
 ## Accuracy by reading speed
+We saw that accuracy varied a lot between participants. But how does this relate to individual reading speed? 
+Here we plot each participant's mean accuracy on the target trials by that participant's mean reading time for the first sentence in a trial.
+
+```{r accuracy by reading speed}
+
+# get mean reading times for sentence 1
+df_rt_sentence1 <- rt_long %>%
+  filter(stage == "mean_rt_sentence1")
+names(df_rt_sentence1)[names(df_rt_sentence1) == "rt"] <- "mean_rt_sentence1"
+
+# merge with df_clean_affix
+df_clean_affix2 <- merge(df_clean_affix, df_rt_sentence1, by = "participant")
+
+# plot mean accuracy
+mean_accuracy_and_rt <- df_clean_affix2 %>%
+  group_by(participant) %>%
+  summarise(mean_rt_sentence1 = first(mean_rt_sentence1),
+            mean_accuracy = mean(correct_incorrect))
+
+# (exclude outlier) MAYBE THIS PERSON SHOULD BE EXCLUDED ENTIRELY EARLIER ON
+mean_accuracy_and_rt <- mean_accuracy_and_rt %>%
+  filter(participant != "5kqwq452")
+
+mean_accuracy_by_rt_plot <- ggplot(aes(x = mean_rt_sentence1, y = mean_accuracy),
+                                   data = mean_accuracy_and_rt) +
+  geom_point() +
+  geom_smooth()
+
+mean_accuracy_by_rt_plot
+
+```
+
+There is no clear connection at the participant level between mean reading speed and the accuracy with which one detects affix omissions. 
+
+# Looking at sentence ratings
+
+In part 2 of the experiment, we asked all participants to rate all the target sentences on a scale from "sounds like a beginner Kalaallisut speaker" to "sounds like a native Kalaallisut speaker". Here we take a look at the results of those ratings.
+
+```{r ratings}
+
+# removing rows we are not interested in
+df_rating <- subset(data_frame, slider_start != "")
+
+# mean rating by sentence id
+rating_by_id <- df_rating %>%
+  group_by(sentence_id) %>%
+  summarise(mean_rating = mean(rating_response))
+rating_by_id
+
+# mean rating by condition
+rating_by_condition <- df_rating %>%
+  group_by(condition) %>%
+  summarise(mean_rating = mean(rating_response))
+rating_by_condition
+
+```
+
