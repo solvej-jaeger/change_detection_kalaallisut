@@ -50,7 +50,7 @@ data_frame <- subset(data_frame, !participant %in% participant_to_exclude1)
 
 ## Excluding participants whose accuracy is too close to chance level
 
-Here, we check the participants' accuracy on all non-target trials. If this accuracy is at chance level, the participants are excluded from further data analysis, as it is too probable that they have just answered randomly throughout the experiment.
+Here, we check the participants' accuracy across all trials. If the accuracy rate is at chance level, the participants are excluded from further data analysis, as it is too probable that they have just answered randomly.
 
 ```{r excluding participants}
 
@@ -62,23 +62,19 @@ df_clean$correct_incorrect <- ifelse(
     df_clean$Ychange_Nchange_response == "yes" & df_clean$correct_change_answer == "subject_deletion"& df_clean$response == df_clean$correct_response,
   1, 0)
 
-# looking only at non-target trials
-df_non_target <- df_clean %>%
-  filter(correct_change_answer != "affix_deletion")
-
 # how many correct does each participant have?
-df_correct_count <- df_non_target %>% 
+df_correct_count <- df_clean %>% 
   group_by(participant) %>% 
   summarize(correct_count = sum(correct_incorrect))
 
-# looking at the binomial distribution, we can see that the cutoff point must be 27 incorrect answers (p = 0.05).
-# if participants have more than 27 incorrect answers (less than 37 correct), it is too probable that they have answered randomly
+# looking at the binomial distribution, we can see that the cutoff point must be 43 incorrect answers (p = 0.05).
+# if participants have more than 43 incorrect answers (less than 53 correct), it is too probable that they have answered randomly
 # note that this assumes equal 50% guessing probability per trial
-dbinom(x=27,size=64,prob=0.5)
-dbinom(x=28,size=64,prob=0.5)
+dbinom(x=43,size=96,prob=0.5)
+dbinom(x=44,size=96,prob=0.5)
 
-# excluding participants that have less than 37 correct
-participants_to_exclude2 <- c("4fpy89hk", "pe6om3uq")
+# excluding participants that have less than 53 correct
+participants_to_exclude2 <- subset(df_correct_count$participant, df_correct_count$correct_count < 53)
 df_clean <- subset(df_clean, !participant %in% participants_to_exclude2)
 data_frame <- subset(data_frame, !participant %in% participants_to_exclude2)
 
@@ -189,7 +185,8 @@ rt_outliers <- rt_different_stages_full_merged %>%
   filter(sum_rt > mean_rt + 3 * sd_rt)
 
 # exclude outliers
-
+df_clean <- df_clean %>%
+  anti_join(rt_outliers, by = c("participant", "sentence_id_specific"))
 
 ```
 
@@ -362,7 +359,11 @@ mean_accuracy_and_rt <- df_clean_affix2 %>%
   summarise(mean_rt_sentence1 = first(mean_rt_sentence1),
             mean_accuracy = mean(correct_incorrect))
 
-# (exclude outlier) MAYBE THIS PERSON SHOULD BE EXCLUDED ENTIRELY EARLIER ON
+# exclude outlier 
+# (this person was not excluded from the main analyses because the amount of time
+# they spent on the task was just below the exclusion threshold
+# - but they were far slower than the others so we exclude them here for the sake
+# of the plot)
 mean_accuracy_and_rt <- mean_accuracy_and_rt %>%
   filter(participant != "5kqwq452")
 
@@ -375,7 +376,175 @@ mean_accuracy_by_rt_plot
 
 ```
 
-There is no clear connection at the participant level between mean reading speed and the accuracy with which one detects affix omissions. 
+There is no clear connection at the participant level between mean reading time and the accuracy with which one detects affix omissions. 
+
+But what if we standardize the reading time measure within each participant? Then we can see if reading faster or slower than one usually does impacts change detection accuracy for affixes.
+
+```{r accuracy by reading speed within participants}
+
+# first calculate RT pr character for sentence 1 in each trial
+# (because the sentences are not all equal in length)
+
+sentence_df <- df_clean %>%
+  group_by(sentence_id_specific) %>%
+  summarise(sentence1 = first(original_sentence))
+
+rt_per_character <- reading_time_first_sentence %>%
+  filter(!(sentence_id_specific %in% c("p1", "p2", "p3", "p4", NA)))
+
+rt_per_character$sentence1 <- sentence_df$sentence1[
+  match(rt_per_character$sentence_id_specific, sentence_df$sentence_id_specific)
+]
+
+rt_per_character <- rt_per_character %>%
+  mutate(rt_per_char = reading_time_sentence1 / nchar(sentence1))
+
+# then center and standardize this measure within each participant
+
+rt_per_character <- rt_per_character %>%
+  group_by(participant) %>%
+  mutate(
+    rt_per_char_centered = rt_per_char - mean(rt_per_char, na.rm = TRUE),
+    rt_per_char_z = as.numeric(scale(rt_per_char))
+  ) %>%
+  ungroup()
+
+# merge with df_clean_affix
+df_accuracy_and_rt <- df_clean_affix %>%
+  left_join(rt_per_character, by = c("sentence_id_specific", "participant"))
+
+# now plot accuracy by standardized rt
+
+accuracy_by_rt_plot <- ggplot(
+  df_accuracy_and_rt,
+  aes(x = rt_per_char_z, y = correct_incorrect)
+) +
+  geom_jitter(
+    height = 0.05,
+    width = 0.05,
+    alpha = 0.15
+  ) +
+  geom_smooth(
+    method = "glm",
+    method.args = list(family = "binomial"),
+    se = TRUE
+  ) +
+  labs(
+    x = "Standardized reading time per character",
+    y = "Change detection accuracy",
+    title = "Change detection accuracy as a function of reading time"
+  ) +
+  theme_classic()
+
+accuracy_by_rt_plot
+
+# different plot: binned 
+
+accuracy_binned <- df_accuracy_and_rt %>%
+  mutate(rt_bin = ntile(rt_per_char_z, 10)) %>%
+  group_by(rt_bin) %>%
+  summarise(
+    mean_rt = mean(rt_per_char_z, na.rm = TRUE),
+    accuracy = mean(correct_incorrect, na.rm = TRUE),
+    n = n(),
+    se = sqrt(accuracy * (1 - accuracy) / n),
+    .groups = "drop"
+  )
+
+ggplot(accuracy_binned, aes(x = mean_rt, y = accuracy)) +
+  geom_point(size = 3) +
+  geom_line() +
+  geom_errorbar(
+    aes(ymin = accuracy - 1.96 * se,
+        ymax = accuracy + 1.96 * se),
+    width = 0.05
+  ) +
+  labs(
+    x = "Standardized reading time per character",
+    y = "Proportion correct",
+    title = "Change detection accuracy across reading time deciles"
+  ) +
+  theme_classic()
+
+# plotting individual participant trends
+
+ggplot(
+  df_accuracy_and_rt,
+  aes(x = rt_per_char_z, y = correct_incorrect)
+) +
+  geom_smooth(
+    method = "glm",
+    method.args = list(family = "binomial"),
+    se = FALSE
+  ) +
+  facet_wrap(~ participant) +
+  labs(
+    x = "Standardized reading time per character",
+    y = "Probability of correct change detection"
+  ) +
+  theme_classic()
+
+```
+
+Overall, there is no clear relationship between reading time and change detection accuracy. It is not the case in general that if participants read a sentence more slowly then they are better at detection when an affix is deleted from that sentence.
+
+## Lexical advantage by reading speed
+
+But what about the lexical/grammatical distinction? Could it be the case that a lexical advantage emerges only when people's reading speed is sufficiently close to normal? (slow reading could mean that every morpheme is processed quite deeply, while fast reading could mean that processing is too shallow for lexical-grammatical differences to emerge). This question can once again be asked both at the level of participant means AND at the within-participant level.
+
+First, let's look at the participant means. 
+
+```{r lexical advantage by reading speed}
+
+df_lexical_advantage <- df_clean_affix2 %>%
+  group_by(participant, mean_rt_sentence1, affix_type) %>%
+  summarise(mean_accuracy = mean(correct_incorrect))
+
+df_lexical_advantage_wider <- df_lexical_advantage %>%
+  select(participant, affix_type, mean_accuracy, mean_rt_sentence1) %>%
+  pivot_wider(
+    names_from = affix_type,
+    values_from = mean_accuracy
+  ) %>%
+  mutate(
+    lexical_advantage = lexical - grammatical
+  )
+
+# exclude outlier 
+df_lexical_advantage_wider <- df_lexical_advantage_wider %>%
+  filter(participant != "5kqwq452")
+
+lexical_advantage_plot <- ggplot(df_lexical_advantage_wider, 
+                                 aes(x = mean_rt_sentence1, y = lexical_advantage)) +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey50") +
+  geom_point(size = 3) +
+  geom_smooth(
+    method = "lm",
+    se = TRUE
+  ) +
+  labs(
+    x = "Participant's mean RT for sentence 1",
+    y = "Lexical advantage (lexical accuracy − grammatical accuracy)"
+  ) +
+  theme_bw()
+
+lexical_advantage_plot
+
+
+```
+
+There is absolutely no pattern connecting overall reading speed to lexical advantage.
+
+But what if we once again look at the standardizes reading times within each participant? Then we can see if reading faster or slower than one usually does impacts lexical advantage.
+
+```{r lexical advantage by reading speed within participants}
+
+
+
+```
+
+
+## Did accuracy increase throughout the experiment?
 
 # Looking at sentence ratings
 
