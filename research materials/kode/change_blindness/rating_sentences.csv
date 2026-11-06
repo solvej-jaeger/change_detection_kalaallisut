@@ -1,0 +1,69 @@
+sentence_id;condition;sentence;sentence_with_line_breaks;affix
+1;lexical_affix;Ualimut kammalaatiga pulaariataarpoq taamaammat kaffiliorpunga kaagiliorlungalu.;<p> Ualimut kammalaatiga pulaariataarpoq taamaammat </p><p> kaffiliorpunga kaagiliorlungalu. </p>;riataar
+1;grammatical_affix;Ualimut kammalaatiga pulaarunnarsivoq taamaammat kaffiliorpunga kaagiliorlungalu.;<p> Ualimut kammalaatiga pulaarunnarsivoq taamaammat </p><p> kaffiliorpunga kaagiliorlungalu. </p>;junnarsi
+1;no_affix;Ualimut kammalaatiga pulaarpoq taamaammat kaffiliorpunga kaagiliorlungalu.;<p> Ualimut kammalaatiga pulaarpoq taamaammat </p><p> kaffiliorpunga kaagiliorlungalu. </p>;NA
+1;no_subject;Ualimut pulaarpoq taamaammat kaffiliorpunga kaagiliorlungalu.;<p> Ualimut pulaarpoq taamaammat </p><p> kaffiliorpunga kaagiliorlungalu. </p>;NA
+2;lexical_affix;Igaffimmi nateq saneqangaarmat taamaammat Minik qulinik ukiulik sanerniarsarivoq.;<p> Igaffimmi nateq saneqangaarmat taamaammat </p><p> Minik qulinik ukiulik sanerniarsarivoq. </p>;niarsare
+2;grammatical_affix;Igaffimmi nateq saneqangaarmat taamaammat Minik qulinik ukiulik sanernikuuvoq.;<p> Igaffimmi nateq saneqangaarmat taamaammat </p><p> Minik qulinik ukiulik sanernikuuvoq. </p>;nikuu
+2;no_affix;Igaffimmi nateq saneqangaarmat taamaammat Minik qulinik ukiulik sanerpoq.;<p> Igaffimmi nateq saneqangaarmat </p><p> taamaammat Minik qulinik ukiulik sanerpoq. </p>;NA
+2;no_subject;Igaffimmi nateq saneqangaarmat taamaammat qulinik ukiulik sanerpoq.;<p> Igaffimmi nateq saneqangaarmat </p><p> taamaammat qulinik ukiulik sanerpoq. </p>;NA
+3;lexical_affix;Ukiup taamaalinerani assut silarluttarpoq taamaattorli Aputsiaq suli aalisartuaannarpoq.;<p> Ukiup taamaalinerani assut silarluttarpoq </p><p> taamaattorli Aputsiaq suli aalisartuaannarpoq. </p>;juaannar
+3;grammatical_affix;Ukiup taamaalinerani assut silarluttarpoq taamaattorli Aputsiaq suli aalisarumaarpoq.;<p> Ukiup taamaalinerani assut silarluttarpoq </p><p> taamaattorli Aputsiaq suli aalisarumaarpoq. </p>;jumaar
+3;no_affix;Ukiup taamaalinerani assut silarluttarpoq taamaattorli Aputsiaq suli aalisarpoq.;<p> Ukiup taamaalinerani assut </p><p> silarluttarpoq taamaattorli Aputsiaq suli aalisarpoq. </p>;NA
+3;no_subject;Ukiup taamaalinerani assut silarluttarpoq taamaattorli suli aalisarpoq.;<p> Ukiup taamaalinerani assut </p><p> silarluttarpoq taamaattorli suli aalisarpoq. </p>;NA
+4;lexical_affix;Soraarummeerfiup naligivaa taamaammat ilinniartoq ulapinneruvoq atuagassaqaqaarlu.;<p> Soraarummeerfiup naligivaa taamaammat </p><p> ilinniartoq ulapinneruvoq atuagassaqaqaarlu. </p>;neru
+4;grammatical_affix;Soraarummeerfiup naligivaa taamaammat ilinniartoq ulapinnguatsiarpoq atuagassaqaqaarlu.;<p> Soraarummeerfiup naligivaa taamaammat </p><p> ilinniartoq ulapinnguatsiarpoq atuagassaqaqaarlu. </p>;nnguatsiar
+4;no_affix;Soraarummeerfiup naligivaa taamaammat ilinniartoq ulapippoq atuagassaqaqaarlu.;<p> Soraarummeerfiup naligivaa taamaammat ilinniartoq </p><p> ulapippoq atuagassaqaqaarlu. </p>;NA
+4;no_subject;Soraarummeerfiup naligivaa taamaammat ulapippoq atuagassaqaqaarlu.;<p> Soraarummeerfiup naligivaa </p><p> taamaammat ulapippoq atuagassaqaqaarlu. </p>;NA
+5;lexical_affix;Sila qiianarmat siallerlunilu meeqqat nuffaseriataarput angerlarsimallutillu.;<p> Sila qiianarmat siallerlunilu meeqqat </p><p> nuffaseriataarput angerlarsimallutillu. </p>;riataar
+5;grammatical_affix;Sila qiianarmat siallerlunilu meeqqat nuffaseqqajaapput angerlarsimallutillu.;<p> Sila qiianarmat siallerlunilu meeqqat </p><p> nuffaseqqajaapput angerlarsimallutillu. </p>;qqajaa
+5;no_affix;Sila qiianarmat siallerlunilu meeqqat nuffaserput angerlarsimallutillu.;<p> Sila qiianarmat siallerlunilu </p><p> meeqqat nuffaserput angerlarsimallutillu. </p>;NA
+5;no_subject;Sila qiianarmat siallerlunilu nuffaserput angerlarsimallutillu.;<p> Sila qiianarmat siallerlunilu </p><p> nuffaserput angerlarsimallutillu. </p>;NA
+6;lexical_affix;Assut siallingaatsialermat Ivalu anipallappoq manisallu eqqullugit.;<p> Assut siallingaatsialermat Ivalu anipallappoq </p><p> manisallu eqqullugit. </p>;pallag
+6;grammatical_affix;Assut siallingaatsialermat Ivalu aneriikatappoq manisallu eqqullugit.;<p> Assut siallingaatsialermat Ivalu aneriikatappoq </p><p> manisallu eqqullugit. </p>;riikatag
+6;no_affix;Assut siallingaatsialermat Ivalu anivoq manisallu eqqullugit.;<p> Assut siallingaatsialermat Ivalu </p><p> anivoq manisallu eqqullugit. </p>;NA
+6;no_subject;Assut siallingaatsialermat anivoq manisallu eqqullugit.;<p> Assut siallingaatsialermat anivoq </p><p> manisallu eqqullugit. </p>;NA
+7;lexical_affix;Aqagu tivoli illoqarfimmut piniarmat nukappiaraq pilerineruvoq.;<p> Aqagu tivoli illoqarfimmut </p><p> piniarmat nukappiaraq pilerineruvoq. </p>;neru
+7;grammatical_affix;Aqagu tivoli illoqarfimmut piniarmat nukappiaraq pilerinnguatsiarpoq.;<p> Aqagu tivoli illoqarfimmut </p><p> piniarmat nukappiaraq pilerinnguatsiarpoq. </p>;nnguatsiar
+7;no_affix;Aqagu tivoli illoqarfimmut piniarmat nukappiaraq pilerivoq.;<p> Aqagu tivoli illoqarfimmut piniarmat </p><p> nukappiaraq pilerivoq. </p>;NA
+7;no_subject;Aqagu tivoli illoqarfimmut piniarmat pilerivoq.;<p> Aqagu tivoli illoqarfimmut </p><p> piniarmat pilerivoq. </p>;NA
+8;lexical_affix;Arfininngorpat katittuussagatta Miap tujuuluk qilattarlugu inerniarsarivaa.;<p> Arfininngorpat katittuussagatta Miap </p><p> tujuuluk qilattarlugu inerniarsarivaa. </p>;niarsare
+8;grammatical_affix;Arfininngorpat katittuussagatta Miap tujuuluk qilattarlugu ineqqammerpaa.;<p> Arfininngorpat katittuussagatta Miap </p><p> tujuuluk qilattarlugu ineqqammerpaa. </p>;qqammer
+8;no_affix;Arfininngorpat katittuussagatta Miap tujuuluk qilattarlugu inerpaa.;<p> Arfininngorpat katittuussagatta </p><p> Miap tujuuluk qilattarlugu inerpaa. </p>;NA
+8;no_subject;Arfininngorpat katittuussagatta tujuuluk qilattarlugu inerpaa.;<p> Arfininngorpat katittuussagatta tujuuluk </p><p> qilattarlugu inerpaa. </p>;NA
+9;lexical_affix;Anorersuarpasilerpoq taamaattumik aataga angerlajaarpoq.;<p> Anorersuarpasilerpoq taamaattumik </p><p> aataga angerlajaarpoq. </p>;jaar
+9;grammatical_affix;Anorersuarpasilerpoq taamaattumik aataga angerlarumaarpoq.;<p> Anorersuarpasilerpoq taamaattumik </p><p> aataga angerlarumaarpoq. </p>;jumaar
+9;no_affix;Anorersuarpasilerpoq taamaattumik aataga angerlarpoq.;<p> Anorersuarpasilerpoq </p><p> taamaattumik aataga angerlarpoq. </p>;NA
+9;no_subject;Anorersuarpasilerpoq taamaattumik angerlarpoq.;<p> Anorersuarpasilerpoq </p><p> taamaattumik angerlarpoq. </p>;NA
+10;lexical_affix;Naalungiarsuk nipangilertorpoq pissutigalugu anaanaminiit nerisinneqarami.;<p> Naalungiarsuk nipangilertorpoq pissutigalugu </p><p> anaanaminiit nerisinneqarami. </p>;lertor
+10;grammatical_affix;Naalungiarsuk nipangeqqammerpoq pissutigalugu anaanaminiit nerisinneqarami.;<p> Naalungiarsuk nipangeqqammerpoq pissutigalugu </p><p> anaanaminiit nerisinneqarami. </p>;qqammer
+10;no_affix;Naalungiarsuk nipangerpoq pissutigalugu anaanaminiit nerisinneqarami.;<p> Naalungiarsuk nipangerpoq </p><p> pissutigalugu anaanaminiit nerisinneqarami. </p>;NA
+10;no_subject;Nipangerpoq pissutigalugu anaanaminiit nerisinneqarami.;<p> Nipangerpoq pissutigalugu anaanaminiit </p><p> nerisinneqarami. </p>;NA
+11;lexical_affix;Ullumi ualeq naallugu kaffillertoqarmat taamaammat aanaga qasujaarpoq.;<p> Ullumi ualeq naallugu kaffillertoqarmat </p><p> taamaammat aanaga qasujaarpoq. </p>;jaar
+11;grammatical_affix;Ullumi ualeq naallugu kaffillertoqarmat taamaammat aanaga qasoqqajaavoq.;<p> Ullumi ualeq naallugu kaffillertoqarmat </p><p> taamaammat aanaga qasoqqajaavoq. </p>;qqajaa
+11;no_affix;Ullumi ualeq naallugu kaffillertoqarmat taamaammat aanaga qasuvoq.;<p> Ullumi ualeq naallugu </p><p> kaffillertoqarmat taamaammat aanaga qasuvoq. </p>;NA
+11;no_subject;Ullumi ualeq naallugu kaffillertoqarmat taamaammat qasuvoq.;<p> Ullumi ualeq naallugu </p><p> kaffillertoqarmat taamaammat qasuvoq. </p>;NA
+12;lexical_affix;Ukiuummat aataga angerlarsimajuaannarpoq qisunnik sanalulluni.;<p> Ukiuummat aataga angerlarsimajuaannarpoq </p><p> qisunnik sanalulluni. </p>;juaannar
+12;grammatical_affix;Ukiuummat aataga angerlarsimajunnarsivoq qisunnik sanalulluni.;<p> Ukiuummat aataga angerlarsimajunnarsivoq </p><p> qisunnik sanalulluni. </p>;junnarsi
+12;no_affix;Ukiuummat aataga angerlarsimavoq qisunnik sanalulluni.;<p> Ukiuummat aataga </p><p> angerlarsimavoq qisunnik sanalulluni. </p>;NA
+12;no_subject;Ukiuummat angerlarsimavoq qisunnik sanalulluni.;<p> Ukiuummat angerlarsimavoq </p><p> qisunnik sanalulluni. </p>;NA
+13;lexical_affix;Ane aperilertorpoq kammalaatini atuarfimmiit illoqarfiliaqatigisinnaanerlugit.;<p> Ane aperilertorpoq kammalaatini </p><p> atuarfimmiit illoqarfiliaqatigisinnaanerlugit. </p>;lertor
+13;grammatical_affix;Ane aperinikuuvoq kammalaatini atuarfimmiit illoqarfiliaqatigisinnaanerlugit.;<p> Ane aperinikuuvoq kammalaatini </p><p> atuarfimmiit illoqarfiliaqatigisinnaanerlugit. </p>;nikuu
+13;no_affix;Ane aperivoq kammalaatini atuarfimmiit illoqarfiliaqatigisinnaanerlugit.;<p> Ane aperivoq kammalaatini atuarfimmiit </p><p> illoqarfiliaqatigisinnaanerlugit. </p>;NA
+13;no_subject;Aperivoq kammalaatini atuarfimmiit illoqarfiliaqatigisinnaanerlugit.;<p> Aperivoq kammalaatini </p><p> atuarfimmiit illoqarfiliaqatigisinnaanerlugit. </p>;NA
+14;lexical_affix;Malik pisiniarfimmut biilipallappoq kisianni ruuat nungussimapput.;<p> Malik pisiniarfimmut biilipallappoq </p><p> kisianni ruuat nungussimapput. </p>;pallag
+14;grammatical_affix;Malik pisiniarfimmut biileraluarpoq kisianni ruuat nungussimapput.;<p> Malik pisiniarfimmut biileraluarpoq </p><p> kisianni ruuat nungussimapput. </p>;galuar
+14;no_affix;Malik pisiniarfimmut biilerpoq kisianni ruuat nungussimapput.;<p> Malik pisiniarfimmut biilerpoq kisianni </p><p> ruuat nungussimapput. </p>;NA
+14;no_subject;Pisiniarfimmut biilerpoq kisianni ruuat nungussimapput.;<p> Pisiniarfimmut biilerpoq kisianni </p><p> ruuat nungussimapput. </p>;NA
+15;lexical_affix;Nukaga toqqoqqissaarpoq kigutigissartinneq nuannarineq ajoramiuk.;<p> Nukaga toqqoqqissaarpoq </p><p> kigutigissartinneq nuannarineq ajoramiuk. </p>;qqissaar
+15;grammatical_affix;Nukaga toqqoriikatappoq kigutigissartinneq nuannarineq ajoramiuk.;<p> Nukaga toqqoriikatappoq </p><p> kigutigissartinneq nuannarineq ajoramiuk. </p>;riikatag
+15;no_affix;Nukaga toqqorpoq kigutigissartinneq nuannarineq ajoramiuk.;<p> Nukaga toqqorpoq kigutigissartinneq </p><p> nuannarineq ajoramiuk. </p>;NA
+15;no_subject;Toqqorpoq kigutigissartinneq nuannarineq ajoramiuk.;<p> Toqqorpoq kigutigissartinneq </p><p> nuannarineq ajoramiuk. </p>;NA
+16;lexical_affix;Nivi qineqqissaarpoq kisianni apimmat takusaqarpiarsinnaanngilaq.;<p> Nivi qineqqissaarpoq kisianni </p><p> apimmat takusaqarpiarsinnaanngilaq. </p>;qqissaar
+16;grammatical_affix;Nivi qineraluarpoq kisianni apimmat takusaqarpiarsinnaanngilaq.;<p> Nivi qineraluarpoq kisianni </p><p> apimmat takusaqarpiarsinnaanngilaq. </p>;galuar
+16;no_affix;Nivi qinerpoq kisianni apimmat takusaqarpiarsinnaanngilaq.;<p> Nivi qinerpoq kisianni apimmat </p><p> takusaqarpiarsinnaanngilaq. </p>;NA
+16;no_subject;Qinerpoq kisianni apimmat takusaqarpiarsinnaanngilaq.;<p> Qinerpoq kisianni apimmat </p><p> takusaqarpiarsinnaanngilaq. </p>;NA
+ungram_1;ungrammatical;Nina umiatsiamik pisisimavunga taava angalaarsinnaavoq.;<p> Nina umiatsiamik pisisimavunga taava </p><p> angalaarsinnaavoq. </p>;NA
+ungram_2;ungrammatical;Johanne igapput unnugu amerlasuunik pulaartoqarniarami.;<p> Johanne igapput unnugu amerlasuunik </p><p> pulaartoqarniarami. </p>;NA
+ungram_3;ungrammatical;Piitaq kommunemut maalaarpunga kisianni sanaartorneq unitsinneqanngilaq.;<p> Piitaq kommunemut maalaarpunga kisianni </p><p> sanaartorneq unitsinneqanngilaq. </p>;NA
+ungram_4;ungrammatical;Nuka sapaatip akunnera kingulleq ilaquttani pulaarlugit Sisimiuniipput.;<p> Nuka sapaatip akunnera kingulleq ilaquttani </p><p> pulaarlugit Sisimiuniipput. </p>;NA

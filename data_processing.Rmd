@@ -48,7 +48,9 @@ data_frame <- subset(data_frame, !participant %in% participant_to_exclude1)
 
 ```
 
-## Excluding participants who have answered randomly
+## Excluding participants whose accuracy is too close to chance level
+
+Here, we check the participants' accuracy on all non-target trials. If this accuracy is at chance level, the participants are excluded from further data analysis, as it is too probable that they have answered randomly.
 
 ```{r excluding participants}
 
@@ -60,19 +62,23 @@ df_clean$correct_incorrect <- ifelse(
     df_clean$Ychange_Nchange_response == "yes" & df_clean$correct_change_answer == "subject_deletion"& df_clean$response == df_clean$correct_response,
   1, 0)
 
+# looking only at non-target trials
+df_non_target <- df_clean %>%
+  filter(correct_change_answer != "affix_deletion")
+
 # how many correct does each participant have?
-df_correct_count <- df_clean %>% 
+df_correct_count <- df_non_target %>% 
   group_by(participant) %>% 
   summarize(correct_count = sum(correct_incorrect))
 
-# looking at the binomial distribution, we can see that the cutoff point must be 43 incorrect answers (p = 0.05).
-# if participants have more than 43 incorrect answers (less than 53 correct), it is too probable that they have answered randomly
+# looking at the binomial distribution, we can see that the cutoff point must be 27 incorrect answers (p = 0.05).
+# if participants have more than 27 incorrect answers (less than 37 correct), it is too probable that they have answered randomly
 # note that this assumes equal 50% guessing probability per trial
-dbinom(x=43,size=96,prob=0.5)
-dbinom(x=44,size=96,prob=0.5)
+dbinom(x=27,size=64,prob=0.5)
+dbinom(x=28,size=64,prob=0.5)
 
-# excluding participants that have less than 53 correct
-participants_to_exclude2 <- c("fkfkavzw", "4fpy89hk", "pe6om3uq")
+# excluding participants that have less than 37 correct
+participants_to_exclude2 <- c("4fpy89hk", "pe6om3uq")
 df_clean <- subset(df_clean, !participant %in% participants_to_exclude2)
 data_frame <- subset(data_frame, !participant %in% participants_to_exclude2)
 
