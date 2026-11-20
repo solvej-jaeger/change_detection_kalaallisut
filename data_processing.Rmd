@@ -162,6 +162,19 @@ ggsave("figures/rt_different_stages.png", plot = rt_plot, width = 9, height = 4)
 
 ```
 
+## Calculating mean reading time per character (to compare with Experiment 1)
+
+```{r rt per character}
+
+reading_time_first_sentence <- data_frame %>%
+  group_by(participant, sentence_id_specific) %>%
+  summarise(reading_time_sentence1 = first(rt))
+
+
+
+```
+
+
 ## Discarding individual outlier trials with very long reaction times
 
 We discard trials where the sum of the reaction times on the three stages (initial sentence reading, change detection, change localization) is more than three SDs above the participant's own mean. We do this because very long RTs can indicate that the participant zoned out or did not pay attention to the task.
@@ -535,16 +548,100 @@ lexical_advantage_plot
 
 There is absolutely no pattern connecting overall reading speed to lexical advantage.
 
-But what if we once again look at the standardizes reading times within each participant? Then we can see if reading faster or slower than one usually does impacts lexical advantage.
+But what if we once again look at the standardized reading times within each participant? Then we can see if reading faster or slower than one usually does impacts lexical advantage.
 
 ```{r lexical advantage by reading speed within participants}
 
+df_lex_advan_within_subj <- df_accuracy_and_rt %>%
+  group_by(participant, sentence_id, affix_type, rt_per_char_z) %>%
+  summarise(accuracy = first(correct_incorrect))
 
+# group by participant and divide trials into three bins: slow, normal, fast
+df_binned <- df_lex_advan_within_subj %>%
+  group_by(participant) %>%
+  mutate(
+    speed_bin = ntile(rt_per_char_z, 3),
+    speed_bin = factor(
+      speed_bin,
+      levels = 1:3,
+      labels = c("Fast", "Normal", "Slow")
+    )
+  ) %>%
+  ungroup()
+
+# calculate accuracy per condition and bin
+df_accuracy <- df_binned %>%
+  group_by(participant, speed_bin, affix_type) %>%
+  summarise(
+    accuracy = mean(accuracy, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# calculate lexical advantage
+df_advantage <- df_accuracy %>%
+  tidyr::pivot_wider(
+    names_from = affix_type,
+    values_from = accuracy
+  ) %>%
+  mutate(
+    lexical_advantage = lexical - grammatical
+  )
+
+# plot
+ggplot(
+  df_advantage,
+  aes(x = speed_bin, y = lexical_advantage,
+      group = participant)
+) +
+  geom_hline(
+    yintercept = 0,
+    linetype = "dashed",
+    color = "grey50"
+  ) +
+  geom_line(
+    alpha = 0.25,
+    color = "grey50"
+  ) +
+  geom_point(
+    alpha = 0.35,
+    size = 2
+  ) +
+  stat_summary(
+    aes(group = 1),
+    fun = mean,
+    geom = "line",
+    linewidth = 1.3,
+    color = "black"
+  ) +
+  stat_summary(
+    aes(group = 1),
+    fun = mean,
+    geom = "point",
+    size = 4,
+    color = "black"
+  ) +
+  stat_summary(
+    aes(group = 1),
+    fun.data = mean_se,
+    geom = "errorbar",
+    width = 0.12,
+    linewidth = 0.8
+  ) +
+  labs(
+    x = "Reading speed",
+    y = "Lexical advantage in accuracy",
+    title = "Lexical advantage depending on reading speed"
+  ) +
+  theme_classic(base_size = 14)
 
 ```
 
 
 ## Did accuracy increase throughout the experiment?
+
+## Do some suffixes consistently have higher accuracy than others - across participants and items?
+Maybe it is the case that some suffixes consistently receive more attention than others - but that this has to do with other factors than their structural status.
+This is a bit difficult to disentagle from the influence of item though, as there were only two different items per suffix.
 
 # Looking at sentence ratings
 
@@ -569,3 +666,4 @@ rating_by_condition
 
 ```
 
+## Does rating correlate with accuracy?
