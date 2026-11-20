@@ -162,19 +162,6 @@ ggsave("figures/rt_different_stages.png", plot = rt_plot, width = 9, height = 4)
 
 ```
 
-## Calculating mean reading time per character (to compare with Experiment 1)
-
-```{r rt per character}
-
-reading_time_first_sentence <- data_frame %>%
-  group_by(participant, sentence_id_specific) %>%
-  summarise(reading_time_sentence1 = first(rt))
-
-
-
-```
-
-
 ## Discarding individual outlier trials with very long reaction times
 
 We discard trials where the sum of the reaction times on the three stages (initial sentence reading, change detection, change localization) is more than three SDs above the participant's own mean. We do this because very long RTs can indicate that the participant zoned out or did not pay attention to the task.
@@ -200,6 +187,24 @@ rt_outliers <- rt_different_stages_full_merged %>%
 # exclude outliers
 df_clean <- df_clean %>%
   anti_join(rt_outliers, by = c("participant", "sentence_id_specific"))
+
+```
+
+
+## Calculating mean reading time per character (to compare with Experiment 1)
+
+```{r rt per character}
+
+reading_time_per_character <- data_frame %>%
+  group_by(participant, sentence_id_specific) %>%
+  summarise(reading_time_sentence1 = first(rt),
+            sentence1 = nth(original_sentence, 3))
+
+reading_time_per_character <- reading_time_per_character %>%
+  mutate(rt_per_char = reading_time_sentence1 / nchar(sentence1)) %>%
+  filter(sentence1 != "")
+
+mean(reading_time_per_character$rt_per_char)
 
 ```
 
